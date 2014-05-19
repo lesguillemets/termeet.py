@@ -29,3 +29,8 @@ Some of these shall be implemented, some of these not.
 
 This is mostly for my personal use, but in case somebody finds it useful, termeet is licensed under MIT.
 See ./LICENSE for the actual license terms.
+
+### Acknowledgements
+
+The basic concept of this client --- twitter client working on CUI via commands --- is from [popotter](https://subversion.assembla.com/svn/popotter/),
+from where some command names such as `ls` and `:q` is borrowed. The script itself is written from scratch, though.
