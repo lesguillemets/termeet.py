@@ -33,4 +33,4 @@ See ./LICENSE for the actual license terms.
 ### Acknowledgements
 
 The basic concept of this client --- twitter client working on CUI via commands --- is from [popotter](https://subversion.assembla.com/svn/popotter/),
-from where some command names such as `ls` and `:q` is borrowed. The script itself is written from scratch, though.
+from which some command names such as `ls` and `:q` are borrowed. The script itself is written from scratch, though.
