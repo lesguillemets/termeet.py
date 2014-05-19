@@ -25,6 +25,7 @@ class Termeet(object):
             )
         except:
             log("Error")
+        self.tl = []
     
     def txtupdate(self, text):
         try:
@@ -34,8 +35,11 @@ class Termeet(object):
             print(e.msg)
     
     def gettimeline(self, n=20):
-        self.tl = self.api.get_home_timeline(count=n)
-        for (i,tw) in enumerate(self.tl):
+        if self.tl:
+            newupdates = self.api.get_home_timeline(since_id=self.tl[0]['id'])
+        else : newupdates = self.api.get_home_timeline(count=n)
+        self.tl = newupdates + self.tl
+        for (i,tw) in enumerate(self.tl[:n]):
             print(str(i).rjust(3)+pprinter.pptweet(tw))
     
     def fav(self,tlnumber):
