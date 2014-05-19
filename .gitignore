@@ -1,0 +1,5 @@
+*.pyc
+consts.py
+const.py
+.user_info
+__pycache__
