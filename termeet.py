@@ -33,13 +33,22 @@ class Termeet(object):
             print("Couldn't update status due to")
             print(e.msg)
     
-    def gettimeline(self):
-        tl = self.api.get_home_timeline()
-        for tw in tl:
-            print(pprinter.pptweet(tw))
+    def gettimeline(self, n=20):
+        self.tl = self.api.get_home_timeline(count=n)
+        for (i,tw) in enumerate(self.tl):
+            print(str(i).rjust(3)+pprinter.pptweet(tw))
+    
+    def fav(self,tlnumber):
+        try:
+            twid = self.tl[tlnumber]['id']
+        except IndexError:
+            print("no index")
+            return
+        self.api.create_favorite(id=twid)
     
     def mainloop(self):
         while True:
+            body = None
             try:
                 cmd = input(' > ')
             except EOFError as e:
@@ -52,7 +61,11 @@ class Termeet(object):
             if cmd == 'tw':
                 self.txtupdate(body)
             elif cmd == 'ls':
-                self.gettimeline()
+                self.gettimeline(body)
+            elif cmd == 'f':
+                ids = body.split(' ')
+                for i in ids:
+                    self.fav(int(i))
             elif cmd == ':q':
                 break
 
