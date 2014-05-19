@@ -44,5 +44,6 @@ def underlined(string):
     return SEQ.format(stylecodes['underlined']).format(string)
 
 if __name__ == "__main__":
-    print(prettify("I'm blue!", 'blue',None,'bold','underlined'))
-    print(prettify("reversed!",None,None,'reverse','blink'))
+    for color in bgcodes:
+        print(prettify("{}".format(color),color),end="\t")
+        print(prettify("{}".format(color),None,color))

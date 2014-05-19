@@ -11,14 +11,14 @@ def pptweet(tweet):
     get a tweet object and returns pretty-printed string.
     """
     return dedent("""\
-        {name} @{scn} {via} {client} {at} {time}:
+        {scn} {via} {client} {at} {time} ({name}):
          »\t{text}"""
     ).format(
-        name = p(tweet['user']['name'],'green',None,'bold'),
-        scn = p(tweet['user']['screen_name'],'cyan'),
+        name = p(tweet['user']['name'],'light green',None,'bold'),
+        scn = p("@"+tweet['user']['screen_name'].ljust(15),'light cyan'),
         via = p("via",'dark gray'),
-        client = p(htmltag.sub('',tweet['source']), 'light gray'),
+        client = p(htmltag.sub('',tweet['source']), 'dark gray'),
         at = p("at",'dark gray'),
-        time = p(tweet['created_at'],'light gray'),
+        time = p(tweet['created_at'],'dark gray'),
         text = tweet['text'],
     )
