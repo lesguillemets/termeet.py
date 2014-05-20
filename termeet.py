@@ -25,7 +25,9 @@ class Termeet(object):
             )
         except:
             log("Error")
-        self.tl = []
+        self.tl = []  # home timeline.
+        self.tweets = []  # tweets now indexed.
+        self.myfavs = []
     
     def txtupdate(self, text):
         try:
@@ -39,16 +41,41 @@ class Termeet(object):
             newupdates = self.api.get_home_timeline(since_id=self.tl[0]['id'])
         else : newupdates = self.api.get_home_timeline(count=n)
         self.tl = newupdates + self.tl
-        for (i,tw) in enumerate(self.tl[:n]):
+        self.tweets = self.tl[:n]
+        for (i,tw) in enumerate(self.tweets):
             print(str(i).rjust(3)+pprinter.pptweet(tw))
     
-    def fav(self,tlnumber):
+    def fav(self,twnumber):
         try:
-            twid = self.tl[tlnumber]['id']
+            twid = self.tweets[twnumber]['id']
         except IndexError:
             print("no index")
             return
         self.api.create_favorite(id=twid)
+    
+    def unfav(self,twnumber):
+        try:
+            twid = self.tweets[twnumber]['id']
+        except IndexError:
+            print("no index")
+            return
+        try:
+            self.api.destroy_favorite(id=twid)
+        except Exception as e:
+            print(e)
+            return
+    
+    def viewmyfavs(self, n=20):
+        if self.myfavs:
+            newfavs = self.api.get_favorites(
+                since_id=self.myfavs[0]['id'])
+        else:
+            newfavs = self.api.get_favorites(count=n)
+        self.myfavs = newfavs + self.myfavs
+        self.tweets = self.myfavs[:n]
+        print("==Favs==")
+        for (i,tw) in enumerate(self.tweets):
+            print(str(i).rjust(3)+pprinter.pptweet(tw))
     
     def mainloop(self):
         while True:
@@ -70,6 +97,12 @@ class Termeet(object):
                 ids = body.split(' ')
                 for i in ids:
                     self.fav(int(i))
+            elif cmd == 'uf':
+                ids = body.split(' ')
+                for i in ids:
+                    self.unfav(int(i))
+            elif cmd == 'gf':
+                self.viewmyfavs()
             elif cmd == ':q':
                 break
 
