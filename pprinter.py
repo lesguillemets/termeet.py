@@ -12,7 +12,7 @@ def pptweet(tweet):
     """
     return dedent("""\
         {scn} {via} {client} {at} {time} ({name}):
-         »\t{text}"""
+         »{faved}{rt}\t{text}"""
     ).format(
         name = p(tweet['user']['name'],'light green',None,'bold'),
         scn = p("@"+tweet['user']['screen_name'].ljust(15),'light cyan'),
@@ -21,4 +21,8 @@ def pptweet(tweet):
         at = p("at",'dark gray'),
         time = p(tweet['created_at'],'dark gray'),
         text = tweet['text'],
+        faved = (p('f',None,'yellow') if tweet['favorited']
+                        else p('f','dark gray')),
+        rt = (p('R', None,'green') if tweet['retweeted']
+                else p('R', 'dark gray'))
     )

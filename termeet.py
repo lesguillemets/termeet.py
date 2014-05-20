@@ -57,6 +57,7 @@ class Termeet(object):
             return
         try:
             self.api.create_favorite(id=twid)
+            self.tweets[twnumber]['favorited'] = True
         except TwythonError as e:
             print(e)
     
@@ -68,6 +69,7 @@ class Termeet(object):
             return
         try:
             self.api.destroy_favorite(id=twid)
+            self.tweets[twnumber]['favorited'] = False
         except TwythonError as e:
             print(e)
             return
