@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import twython
+from twython.exceptions import TwythonError
 from twython import Twython
 import pickle
 import consts
@@ -23,8 +23,8 @@ class Termeet(object):
                 tokens['access_token'],
                 tokens['access_token_secret'],
             )
-        except:
-            log("Error")
+        except Exception as e:
+            log(e)
         self.tl = []  # home timeline.
         self.tweets = []  # tweets now indexed.
         self.myfavs = []
@@ -32,11 +32,15 @@ class Termeet(object):
     def txtupdate(self, text):
         try:
             self.api.update_status(status=text)
-        except twython.exceptions.TwythonError as e:
+        except TwythonError as e:
             print("Couldn't update status due to")
             print(e.msg)
     
-    def gettimeline(self, n=20):
+    def gettimeline(self, n):
+        if n:
+            n = int(n)
+        else:
+            n = 20
         if self.tl:
             newupdates = self.api.get_home_timeline(since_id=self.tl[0]['id'])
         else : newupdates = self.api.get_home_timeline(count=n)
@@ -51,7 +55,10 @@ class Termeet(object):
         except IndexError:
             print("no index")
             return
-        self.api.create_favorite(id=twid)
+        try:
+            self.api.create_favorite(id=twid)
+        except TwythonError as e:
+            print(e)
     
     def unfav(self,twnumber):
         try:
@@ -61,7 +68,7 @@ class Termeet(object):
             return
         try:
             self.api.destroy_favorite(id=twid)
-        except Exception as e:
+        except TwythonError as e:
             print(e)
             return
     
