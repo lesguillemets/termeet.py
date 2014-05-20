@@ -24,7 +24,7 @@ Some of these shall be implemented, some of these not.
 - [ ] Comprehensive mute settings.
 - [ ] Tweet self-destructive tweets.
 - [ ] “Virtual Follow” : follow on this client, not on twitter.
-- [ ] Works like an interpreter : type `rgb #ff33dd` to post the colour sample, use `suddendeath` comand to surround your text, or `whether [cityname]` command to tweet your local weather forecast!
+- [ ] Works like an interpreter : type `rgb #ff33dd` to post the colour sample, use `suddendeath` comand to surround your text, or `weather [cityname]` command to tweet your local weather forecast!
 
 ### License
 
