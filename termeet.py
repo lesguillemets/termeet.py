@@ -15,7 +15,10 @@ with open("./.user_info", 'rb') as f:
 class Termeet(object):
     
     def __init__(self):
-        tokens = user_info[0]['keys']
+        self.setaccount(0)
+    
+    def setaccount(self,n):
+        tokens = user_info[n]['keys']
         try:
             self.api = Twython(
                 consts.keys['API_KEY'],
@@ -86,6 +89,14 @@ class Termeet(object):
         for (i,tw) in enumerate(self.tweets):
             print(str(i).rjust(3)+pprinter.pptweet(tw))
     
+    def checkout(self,n):
+        if len(user_info) < n+1:
+            print("no such account")
+            return
+        else:
+            self.setaccount(n)
+
+    
     def mainloop(self):
         while True:
             body = None
@@ -112,6 +123,8 @@ class Termeet(object):
                     self.unfav(int(i))
             elif cmd == 'gf':
                 self.viewmyfavs()
+            elif cmd == "checkout":
+                self.checkout(int(body))
             elif cmd == ':q':
                 break
 
