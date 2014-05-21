@@ -61,6 +61,7 @@ class Termeet(object):
         try:
             self.api.create_favorite(id=twid)
             self.tweets[twnumber]['favorited'] = True
+            # TODO: doesn't work if ls->f 1 -> gf -> ls
         except TwythonError as e:
             print(e)
     
@@ -73,6 +74,19 @@ class Termeet(object):
         try:
             self.api.destroy_favorite(id=twid)
             self.tweets[twnumber]['favorited'] = False
+        except TwythonError as e:
+            print(e)
+            return
+    
+    def rt(self,twnumber):
+        try:
+            twid = self.tweets[twnumber]['id']
+        except IndexError:
+            print("No index")
+            return
+        try:
+            self.api.retweet(id=twid)
+            self.tweets[twnumber]['retweeted'] = True
         except TwythonError as e:
             print(e)
             return
@@ -123,6 +137,8 @@ class Termeet(object):
                     self.unfav(int(i))
             elif cmd == 'gf':
                 self.viewmyfavs()
+            elif cmd == 'r':
+                self.rt(int(body))
             elif cmd == "checkout":
                 self.checkout(int(body))
             elif cmd == ':q':
