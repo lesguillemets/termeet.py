@@ -4,6 +4,7 @@ from twython.exceptions import TwythonError
 from twython import Twython
 import pickle
 import readline
+import sys
 import consts
 import pprinter
 
@@ -34,6 +35,8 @@ class Termeet(object):
         self.myfavs = []
     
     def txtupdate(self, text):
+        if not text:
+            text = sys.stdin.read()
         try:
             self.api.update_status(status=text)
         except TwythonError as e:
