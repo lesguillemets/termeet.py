@@ -43,6 +43,23 @@ class Termeet(object):
             print("Couldn't update status due to")
             print(e.msg)
     
+    def txtreply(self,twn, text):
+        if not text:
+            text = sys.stdin.read()
+        try:
+            target = self.tweets[twn]
+        except IndexError:
+            print("Beyond Index")
+            return
+        text = '@' + target['user']['screen_name'] + ' ' + text
+        try:
+            self.api.update_status(
+                status = text,
+                in_reply_to_status_id = target['id'])
+        except TwythonError as e:
+            print(e)
+            return
+    
     def gettimeline(self, n):
         if n:
             n = int(n)
@@ -129,6 +146,13 @@ class Termeet(object):
             print("#####{}#####".format(cmd))
             if cmd == 'tw':
                 self.txtupdate(body)
+            elif cmd == 'r' or cmd == 'rep':
+                if ' ' in body:
+                    num = int(body[:body.find(' ')])
+                    text = body[body.find(' ')+1:]
+                else:
+                    num = int(body)
+                self.txtreply(num,text)
             elif cmd == 'ls':
                 self.gettimeline(body)
             elif cmd == 'f':
@@ -141,7 +165,7 @@ class Termeet(object):
                     self.unfav(int(i))
             elif cmd == 'gf':
                 self.viewmyfavs()
-            elif cmd == 'r':
+            elif cmd == 'rt':
                 self.rt(int(body))
             elif cmd == "checkout":
                 self.checkout(int(body))
