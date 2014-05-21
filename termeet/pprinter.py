@@ -11,7 +11,7 @@ def pptweet(tweet):
     get a tweet object and returns pretty-printed string.
     """
     return dedent("""\
-        {scn} {via} {client} {at} {time} ({name}):
+        {scn} {via} {client} {at} {time} ({name}) [faved : {fvcnt}, RT-ed : {rtcnt}]
          »{faved}{rt}\t{text}"""
     ).format(
         name = p(tweet['user']['name'],'light green',None,'bold'),
@@ -24,7 +24,9 @@ def pptweet(tweet):
         faved = (p('f',None,'yellow') if tweet['favorited']
                         else p('f','dark gray')),
         rt = (p('R', None,'green') if tweet['retweeted']
-                else p('R', 'dark gray'))
+                else p('R', 'dark gray')),
+        fvcnt = tweet['favorite_count'],
+        rtcnt = tweet['retweet_count'],
     )
 
 def wraptext(text, heading="    \t"):
