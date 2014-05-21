@@ -34,7 +34,7 @@ class Termeet(object):
         self.tweets = []  # tweets now indexed.
         self.myfavs = []
     
-    def txtupdate(self, text):
+    def txtupdate(self,text):
         if not text:
             text = sys.stdin.read()
         try:
@@ -43,7 +43,7 @@ class Termeet(object):
             print("Couldn't update status due to")
             print(e.msg)
     
-    def txtreply(self,twn, text):
+    def txtreply(self,twn,text):
         if not text:
             text = sys.stdin.read()
         try:
@@ -56,6 +56,18 @@ class Termeet(object):
             self.api.update_status(
                 status = text,
                 in_reply_to_status_id = target['id'])
+        except TwythonError as e:
+            print(e)
+            return
+    
+    def deltweet(self,twn):
+        try:
+            targetid = self.tweets[twn]['id']
+        except IndexError:
+            print("Not indexed")
+            return
+        try:
+            self.api.destroy_status(id=targetid)
         except TwythonError as e:
             print(e)
             return
@@ -167,6 +179,8 @@ class Termeet(object):
                 self.viewmyfavs()
             elif cmd == 'rt':
                 self.rt(int(body))
+            elif cmd == 'rm':
+                self.deltweet(int(body))
             elif cmd == "checkout":
                 self.checkout(int(body))
             elif cmd == ':q':
