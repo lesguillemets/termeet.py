@@ -20,9 +20,12 @@ def pptweet(tweet):
         client = p(htmltag.sub('',tweet['source']), 'dark gray'),
         at = p("at",'dark gray'),
         time = p(tweet['created_at'],'dark gray'),
-        text = tweet['text'],
+        text = wraptext(tweet['text']),
         faved = (p('f',None,'yellow') if tweet['favorited']
                         else p('f','dark gray')),
         rt = (p('R', None,'green') if tweet['retweeted']
                 else p('R', 'dark gray'))
     )
+
+def wraptext(text, heading="    \t"):
+    return ('\n'+heading).join(text.split('\n'))
