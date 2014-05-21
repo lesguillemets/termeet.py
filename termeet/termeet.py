@@ -3,6 +3,7 @@
 from twython.exceptions import TwythonError
 from twython import Twython
 import pickle
+import readline
 import consts
 import pprinter
 
