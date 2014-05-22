@@ -30,9 +30,19 @@ class Termeet(object):
             )
         except Exception as e:
             log(e)
-        self.tl = []  # home timeline.
-        self.tweets = []  # tweets now indexed.
-        self.myfavs = []
+        self.mode = 'tl'
+        self.tweets = {
+            'tl' : [], # home timeline.
+            'myfavs' : [],
+            'lists' : {},
+        }
+    
+    def getnthtweet(self,n):
+        try:
+            return self.tweets[self.mode][n]
+        except IndexError:
+            print("Beyond Index")
+            raise TweetBeyondIndexError
     
     def txtupdate(self,text):
         if not text:
@@ -47,9 +57,8 @@ class Termeet(object):
         if not text:
             text = sys.stdin.read()
         try:
-            target = self.tweets[twn]
-        except IndexError:
-            print("Beyond Index")
+            target = self.getnthtweet(twn)
+        except TweetBeyondIndexError:
             return
         text = '@' + target['user']['screen_name'] + ' ' + text
         try:
@@ -62,9 +71,8 @@ class Termeet(object):
     
     def deltweet(self,twn):
         try:
-            targetid = self.tweets[twn]['id']
-        except IndexError:
-            print("Not indexed")
+            targetid = self.getnthtweet(twn)['id']
+        except TweetBeyondIndexError:
             return
         try:
             self.api.destroy_status(id=targetid)
@@ -76,50 +84,48 @@ class Termeet(object):
         if n:
             n = int(n)
         else:
-            n = 20
-        if self.tl:
-            newupdates = self.api.get_home_timeline(since_id=self.tl[0]['id'])
-        else : newupdates = self.api.get_home_timeline(count=n)
-        self.tl = newupdates + self.tl
-        self.tweets = self.tl[:n]
-        for (i,tw) in enumerate(self.tweets):
+            n = 20 # n might be None, so this lengthy code is required
+        self.mode = 'tl'
+        if self.tweets['tl']:
+            newupdates = self.api.get_home_timeline(since_id=self.getnthtweet(0)['id'])
+        else:
+            newupdates = self.api.get_home_timeline(count=n)
+        self.tweets['tl'] = newupdates + self.tweets['tl']
+        for (i,tw) in enumerate(self.tweets['tl'][:n]):
             print(str(i).rjust(3)+pprinter.pptweet(tw))
     
     def fav(self,twnumber):
         try:
-            twid = self.tweets[twnumber]['id']
-        except IndexError:
-            print("no index")
+            twid = self.getnthtweet(twnumber)['id']
+        except TweetBeyondIndexError:
             return
         try:
             self.api.create_favorite(id=twid)
-            self.tweets[twnumber]['favorited'] = True
+            self.tweets[self.mode][twnumber]['favorited'] = True
             # TODO: doesn't work if ls->f 1 -> gf -> ls
         except TwythonError as e:
             print(e)
     
     def unfav(self,twnumber):
         try:
-            twid = self.tweets[twnumber]['id']
-        except IndexError:
-            print("no index")
+            twid = self.getnthtweet(twnumber)['id']
+        except TweetBeyondIndexError:
             return
         try:
             self.api.destroy_favorite(id=twid)
-            self.tweets[twnumber]['favorited'] = False
+            self.tweets[self.mode][twnumber]['favorited'] = False
         except TwythonError as e:
             print(e)
             return
     
     def rt(self,twnumber):
         try:
-            twid = self.tweets[twnumber]['id']
-        except IndexError:
-            print("No index")
+            twid = self.getnthtweet(twnumber)['id']
+        except TweetBeyondIndexError:
             return
         try:
             self.api.retweet(id=twid)
-            self.tweets[twnumber]['retweeted'] = True
+            self.tweets[self.mode][twnumber]['retweeted'] = True
         except TwythonError as e:
             print(e)
             return
@@ -166,15 +172,15 @@ class Termeet(object):
                     pass
     
     def viewmyfavs(self, n=20):
-        if self.myfavs:
+        self.mode = 'myfavs'
+        if self.tweets['myfavs']:
             newfavs = self.api.get_favorites(
                 since_id=self.myfavs[0]['id'])
         else:
             newfavs = self.api.get_favorites(count=n)
-        self.myfavs = newfavs + self.myfavs
-        self.tweets = self.myfavs[:n]
+        self.tweets['myfavs'] = newfavs + self.tweets['myfavs']
         print("==Favs==")
-        for (i,tw) in enumerate(self.tweets):
+        for (i,tw) in enumerate(self.tweets['myfavs'][:n]):
             print(str(i).rjust(3)+pprinter.pptweet(tw))
     
     def checkout(self,n):
@@ -230,6 +236,9 @@ class Termeet(object):
                 self.view_limits()
             elif cmd == ':q':
                 break
+
+class TweetBeyondIndexError(Exception):
+    pass
 
 if __name__ == "__main__":
     termeet = Termeet()
