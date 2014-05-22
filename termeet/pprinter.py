@@ -9,6 +9,11 @@ from colors import prettify as p
 htmltag = re.compile(r'<[^>]+>')
 
 def pptweet(tweet):
+    # FIXME : 140+letters after RT
+    text = usc(tweet['text'])
+    urls = tweet['entities']['urls']
+    for url in urls:
+        text = text.replace(url['url'],url['expanded_url'])
     """
     get a tweet object and returns pretty-printed string.
     """
@@ -22,7 +27,7 @@ def pptweet(tweet):
         client = p(usc(htmltag.sub('',tweet['source'])), 'dark gray'),
         at = p("at",'dark gray'),
         time = p(tweet['created_at'],'dark gray'),
-        text = wraptext(usc(tweet['text'])),
+        text = wraptext(text),
         faved = (p('f',None,'yellow') if tweet['favorited']
                         else p('f','dark gray')),
         rt = (p('R', None,'green') if tweet['retweeted']
