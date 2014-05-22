@@ -46,7 +46,7 @@ def ppuser(user):
     \t{status} {protected}
     \tSince {since} / lang:{lang} / timezone:{timezone}
     """).format(
-        usrname = p(usc(user['name'],None,None,'bold')),
+        usrname = p(usc(user['name']),None,None,'bold'),
         scrname = p("@"+usc(user['screen_name']),'yellow'),
         verified = p("Verified",'blue') if user['verified'] else "",
         loc = usc(user['location']),
