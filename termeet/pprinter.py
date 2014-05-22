@@ -3,6 +3,7 @@
 from textwrap import dedent
 import re
 from colors import prettify as p
+from html.parser import unescape as usc
 
 htmltag = re.compile(r'<[^>]+>')
 
@@ -14,13 +15,13 @@ def pptweet(tweet):
         {scn} {via} {client} {at} {time} ({name}) [faved : {fvcnt}, RT-ed : {rtcnt}]
          »{faved}{rt}\t{text}"""
     ).format(
-        name = p(tweet['user']['name'],'light green',None,'bold'),
+        name = p(usc(tweet['user']['name']),'light green',None,'bold'),
         scn = p("@"+tweet['user']['screen_name'].ljust(15),'light cyan'),
         via = p("via",'dark gray'),
-        client = p(htmltag.sub('',tweet['source']), 'dark gray'),
+        client = p(usc(htmltag.sub('',tweet['source'])), 'dark gray'),
         at = p("at",'dark gray'),
         time = p(tweet['created_at'],'dark gray'),
-        text = wraptext(tweet['text']),
+        text = wraptext(usc(tweet['text'])),
         faved = (p('f',None,'yellow') if tweet['favorited']
                         else p('f','dark gray')),
         rt = (p('R', None,'green') if tweet['retweeted']
@@ -44,11 +45,11 @@ def ppuser(user):
     \t{status} {protected}
     \tSince {since} / lang:{lang} / timezone:{timezone}
     """).format(
-        usrname = p(user['name'],None,None,'bold'),
-        scrname = p("@"+user['screen_name'],'yellow'),
+        usrname = p(usc(user['name'],None,None,'bold')),
+        scrname = p("@"+usc(user['screen_name']),'yellow'),
         verified = p("Verified",'blue') if user['verified'] else "",
-        loc = user['location'],
-        dscr = wraptext(user['description'],"\t"),
+        loc = usc(user['location']),
+        dscr = wraptext(usc(user['description']),"\t"),
         tweets = user['statuses_count'],
         favs = user['favourites_count'],
         fling = user['friends_count'],
