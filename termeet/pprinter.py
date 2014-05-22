@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 from textwrap import dedent
+import time
 import re
-from colors import prettify as p
 from html.parser import unescape as usc
+from colors import prettify as p
 
 htmltag = re.compile(r'<[^>]+>')
 
@@ -62,5 +63,16 @@ def ppuser(user):
         timezone = user['time_zone'],
     )
 
+def pplimit(limitinfo):
+    return "{remaining:>3}/{limit:>3}: resets at {reset}".format(
+        remaining = limitinfo['remaining'],
+        limit = limitinfo['limit'],
+        reset = ppepoch_hms(limitinfo['reset'])
+    )
+
 def wraptext(text, heading="    \t"):
     return ('\n'+heading).join(text.split('\n'))
+
+def ppepoch_hms(epochtime):
+    lctime = time.localtime(epochtime)
+    return time.strftime("%H:%M:%S",lctime)

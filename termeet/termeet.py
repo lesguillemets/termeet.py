@@ -145,6 +145,26 @@ class Termeet(object):
         for tweet in tweets:
             print(pprinter.pptweet(tweet))
     
+    def view_limits(self, resources=["statuses","users"]):
+        try:
+            rls = self.api.get_application_rate_limit_status(
+                resources = ','.join(resources)
+            )['resources']
+        except TwythonError as e:
+            print(e)
+            return
+        for resource_name in resources:
+            res = rls[resource_name]
+            for action in [
+                    "/statuses/home_timeline",
+                    "/statuses/user_timeline",
+                    "/users/lookup"
+            ]:
+                try:
+                    print(action + '\t'+ pprinter.pplimit(res[action]))
+                except KeyError:
+                    pass
+    
     def viewmyfavs(self, n=20):
         if self.myfavs:
             newfavs = self.api.get_favorites(
@@ -206,6 +226,8 @@ class Termeet(object):
                 self.checkout(int(body))
             elif cmd == "gu":
                 self.view_user_info(body)
+            elif cmd == "limits":
+                self.view_limits()
             elif cmd == ':q':
                 break
 
