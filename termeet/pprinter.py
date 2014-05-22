@@ -29,5 +29,37 @@ def pptweet(tweet):
         rtcnt = tweet['retweet_count'],
     )
 
+def ppuser(user):
+    if user['following']:
+        status = p("✔",'green') + "following"
+    elif user['follow_request_sent']:
+        status = p("request pending", 'yellow')
+    else:
+        status = "Not following"
+    return dedent("""\
+    {usrname} {scrname} {verified}
+    \t{loc}
+    \t{dscr}
+    \t{tweets} tweets / {favs} favs / {fling} following / {flers} followers / {listed} listed
+    \t{status} {protected}
+    \tSince {since} / lang:{lang} / timezone:{timezone}
+    """).format(
+        usrname = p(user['name'],None,None,'bold'),
+        scrname = p("@"+user['screen_name'],'yellow'),
+        verified = p("Verified",'blue') if user['verified'] else "",
+        loc = user['location'],
+        dscr = wraptext(user['description'],"\t"),
+        tweets = user['statuses_count'],
+        favs = user['favourites_count'],
+        fling = user['friends_count'],
+        flers = user['followers_count'],
+        listed = user['listed_count'],
+        status = status,
+        protected = "Protected" if user['protected'] else '',
+        since = user['created_at'],
+        lang = user['lang'],
+        timezone = user['time_zone'],
+    )
+
 def wraptext(text, heading="    \t"):
     return ('\n'+heading).join(text.split('\n'))

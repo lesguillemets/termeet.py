@@ -124,6 +124,27 @@ class Termeet(object):
             print(e)
             return
     
+    def view_user_info(self,scrname):
+        try:
+            users = self.api.lookup_user(screen_name=scrname)
+        except TwythonError as e:
+            print(e)
+            return
+        for user in users:
+            print(pprinter.ppuser(user))
+            self.view_user_tweets(user['screen_name'])
+    
+    def view_user_tweets(self,scrname,n=10):
+        try:
+            tweets = self.api.get_user_timeline(
+                screen_name=scrname,
+                count = n)
+        except TwythonError as e:
+            print(e)
+            return
+        for tweet in tweets:
+            print(pprinter.pptweet(tweet))
+    
     def viewmyfavs(self, n=20):
         if self.myfavs:
             newfavs = self.api.get_favorites(
@@ -183,6 +204,8 @@ class Termeet(object):
                 self.deltweet(int(body))
             elif cmd == "checkout":
                 self.checkout(int(body))
+            elif cmd == "gu":
+                self.view_user_info(body)
             elif cmd == ':q':
                 break
 
