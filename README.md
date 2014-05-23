@@ -2,7 +2,7 @@ Termeet
 ========
 
  **Termeet** (/təːmiːt/), coined from ‘terminal’ + ‘tweet’, is yet another twitter client that runs on terminal.
- This aims to be i) first basic and minimalist, and ii) one-in-the-kind client by having tiny yet useful-for-some features.
+ This aims to be i) first basic and minimalist, and ii) one-of-a-kind client by having tiny yet useful-for-some features.
  Under development: won’t work for you for now.
 
 ### Requirements
