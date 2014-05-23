@@ -31,6 +31,7 @@ class Termeet(object):
         except Exception as e:
             log(e)
         self.mode = 'tl'
+        self.offset = 0
         self.tweets = {
             'tl' : [], # home timeline.
             'myfavs' : [],
@@ -39,7 +40,7 @@ class Termeet(object):
     
     def getnthtweet(self,n):
         try:
-            return self.tweets[self.mode][n]
+            return self.tweets[self.mode][n+self.offset]
         except IndexError:
             print("Beyond Index")
             raise TweetBeyondIndexError
@@ -81,6 +82,7 @@ class Termeet(object):
             return
     
     def gettimeline(self, n):
+        self.offset = 0
         if n:
             n = int(n)
         else:
@@ -101,7 +103,7 @@ class Termeet(object):
             return
         try:
             self.api.create_favorite(id=twid)
-            self.tweets[self.mode][twnumber]['favorited'] = True
+            self.tweets[self.mode][twnumber+self.offset]['favorited'] = True
             # TODO: doesn't work if ls->f 1 -> gf -> ls
         except TwythonError as e:
             print(e)
@@ -113,7 +115,7 @@ class Termeet(object):
             return
         try:
             self.api.destroy_favorite(id=twid)
-            self.tweets[self.mode][twnumber]['favorited'] = False
+            self.tweets[self.mode][twnumber+self.offset]['favorited'] = False
         except TwythonError as e:
             print(e)
             return
@@ -125,7 +127,7 @@ class Termeet(object):
             return
         try:
             self.api.retweet(id=twid)
-            self.tweets[self.mode][twnumber]['retweeted'] = True
+            self.tweets[self.mode][twnumber+self.offset]['retweeted'] = True
         except TwythonError as e:
             print(e)
             return
@@ -173,6 +175,7 @@ class Termeet(object):
     
     def viewmyfavs(self, n=20):
         self.mode = 'myfavs'
+        self.offset = 0
         if self.tweets['myfavs']:
             newfavs = self.api.get_favorites(
                 since_id=self.myfavs[0]['id'])
@@ -211,8 +214,9 @@ class Termeet(object):
             print(e)
             return
         if older:
-            for tw in older:
-                print(pprinter.pptweet(tw))
+            self.offset = len(self.tweets[self.mode])
+            for (n,tw) in enumerate(older):
+                print(str(n).rjust(3)+pprinter.pptweet(tw))
             self.tweets[self.mode].extend(older)
     
     def mainloop(self):
