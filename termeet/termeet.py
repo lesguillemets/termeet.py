@@ -189,7 +189,31 @@ class Termeet(object):
             return
         else:
             self.setaccount(n)
-
+    
+    def read_more(self,n=20):
+        if n:
+            n = int(n)
+        else:
+            n = 20
+        oldestid = self.tweets[self.mode][-1]['id']
+        try:
+            if self.mode == 'tl':
+                older = self.api.get_home_timeline(
+                    max_id = oldestid,
+                    count = n
+                )
+            elif self.mode == 'myfavs':
+                older = self.api.get_favorites(
+                    max_id = oldestid,
+                    count = n
+                )
+        except TwythonError as e:
+            print(e)
+            return
+        if older:
+            for tw in older:
+                print(pprinter.pptweet(tw))
+            self.tweets[self.mode].extend(older)
     
     def mainloop(self):
         while True:
@@ -234,6 +258,8 @@ class Termeet(object):
                 self.view_user_info(body)
             elif cmd == "limits":
                 self.view_limits()
+            elif cmd == 'more':
+                self.read_more()
             elif cmd == ':q':
                 break
 
