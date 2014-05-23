@@ -195,16 +195,16 @@ class Termeet(object):
             n = int(n)
         else:
             n = 20
-        oldestid = self.tweets[self.mode][-1]['id']
+        uptoid = self.tweets[self.mode][-1]['id'] - 1
         try:
             if self.mode == 'tl':
                 older = self.api.get_home_timeline(
-                    max_id = oldestid,
+                    max_id = uptoid,
                     count = n
                 )
             elif self.mode == 'myfavs':
                 older = self.api.get_favorites(
-                    max_id = oldestid,
+                    max_id = uptoid,
                     count = n
                 )
         except TwythonError as e:
